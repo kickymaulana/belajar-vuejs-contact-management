@@ -2,8 +2,8 @@
 
 import {ref, onBeforeMount} from "vue";
 import {useLocalStorage} from "@vueuse/core";
-import {userDetail} from "../../lib/api/UserApi.js";
-import {alertError} from "../../lib/alert.js"
+import {userDetail, userUpdateProfile, userUpdatePassword} from "../../lib/api/UserApi.js";
+import {alertError, alertSuccess} from "../../lib/alert.js"
 
 const token = useLocalStorage("token", "")
 const name = ref("")
@@ -20,9 +20,38 @@ async function fetchUser(){
   } else {
       await alertError(responseBody.errors)
   }
-
 }
 
+async function handleChangeName(){
+  const response = await userUpdateProfile(token.value, {name: name.value});
+  const responseBody = await response.json();
+  console.log(responseBody);
+
+  if(response.status === 200){
+    await alertSuccess("Profile update successfully")
+  } else {
+    await alertError(responseBody.errors)
+  }
+}
+
+async function handleChangePassword(){
+  if(password.value !== confirm_password.value){
+    await alertError("Password do not match")
+    return;
+  }
+  const response = await userUpdatePassword(token.value, {password: password.value});
+  const responseBody = await response.json();
+  console.log(responseBody);
+
+  if(response.status === 200){
+    password.value = "";
+    confirm_password.value = "";
+    await alertSuccess("Password update successfully")
+  } else {
+    await alertError(responseBody.errors)
+  }
+
+}           
 onBeforeMount(async () => {
   await fetchUser();
 })
@@ -45,7 +74,7 @@ onBeforeMount(async () => {
           </div>
           <h2 class="text-xl font-semibold text-white">Edit Profile</h2>
         </div>
-        <form>
+        <form v-on:submit.prevent="handleChangeName">
           <div class="mb-5">
             <label for="name" class="block text-gray-300 text-sm font-medium mb-2">Full Name</label>
             <div class="relative">
@@ -77,7 +106,7 @@ onBeforeMount(async () => {
           </div>
           <h2 class="text-xl font-semibold text-white">Change Password</h2>
         </div>
-        <form>
+        <form v-on:submit.prevent="handleChangePassword">
           <div class="mb-5">
             <label for="new_password" class="block text-gray-300 text-sm font-medium mb-2">New Password</label>
             <div class="relative">
@@ -86,7 +115,7 @@ onBeforeMount(async () => {
               </div>
               <input type="password" id="new_password" name="new_password" 
                 class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
-                placeholder="Enter your new password" required>
+                placeholder="Enter your new password" required v-model="password">
             </div>
           </div>
 
@@ -98,7 +127,7 @@ onBeforeMount(async () => {
               </div>
               <input type="password" id="confirm_password" name="confirm_password" 
                 class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
-                placeholder="Confirm your new password" required>
+                placeholder="Confirm your new password" required v-model="confirm_password">
             </div>
           </div>
 

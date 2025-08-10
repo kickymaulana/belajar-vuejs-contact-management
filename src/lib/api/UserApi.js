@@ -37,12 +37,13 @@ export const userDetail = async (token) => {
   })
 }
 
-export const userUpdateProfile = async ({ name }) => {
+export const userUpdateProfile = async (token, { name }) => {
   return await fetch(`${import.meta.env.VITE_API_PATH}/api/users/current`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+      'Authorization': token
     },
     body: JSON.stringify({
       name,
@@ -50,12 +51,13 @@ export const userUpdateProfile = async ({ name }) => {
   })
 }
 
-export const userUpdatePassword = async ({ password }) => {
+export const userUpdatePassword = async (token, { password }) => {
   return await fetch(`${import.meta.env.VITE_API_PATH}/api/users/current`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      'Accept': 'application/json',
+      'Authorization': token
     },
     body: JSON.stringify({
       password,
