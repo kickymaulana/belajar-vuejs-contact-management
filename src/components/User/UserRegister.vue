@@ -1,5 +1,44 @@
 <script setup>
 
+import {reactive} from "vue"
+import {userRegister} from "../../lib/api/UserApi.js";
+import {alertSuccess, alertError} from "../../lib/alert.js";
+import {useRouter} from "vue-router";
+
+
+
+const router = useRouter();
+  
+const user = reactive({
+  username: "",
+  password: "",
+  name: "",
+  confirm_password: "",
+})
+
+async function handleSubmimt(){
+  if(user.password !== user.confirm_password){
+    await alertError("Password dot not match")
+    return;
+  }
+
+
+
+  const response = await userRegister(user)
+  const responseBody = await response.json()
+  console.log(responseBody)
+
+  if(response.status === 200){
+    await alertSuccess("User created successfully")
+    await router.push({
+      path: "/login"
+    })
+  } else {
+    await alertError(responseBody.errors)
+
+  }
+}
+
 </script>
 
 <template>
@@ -13,7 +52,7 @@
       <p class="text-gray-300 mt-2">Create a new account</p>
     </div>
 
-    <form>
+    <form v-on:submit.prevent="handleSubmimt">
       <div class="mb-4">
         <label for="username" class="block text-gray-300 text-sm font-medium mb-2">Username</label>
         <div class="relative">
@@ -22,7 +61,7 @@
           </div>
           <input type="text" id="username" name="username" 
             class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
-            placeholder="Choose a username" required>
+            placeholder="Choose a username" required v-model="user.username">
         </div>
       </div>
 
@@ -34,7 +73,7 @@
           </div>
           <input type="text" id="name" name="name" 
             class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
-            placeholder="Enter your full name" required>
+            placeholder="Enter your full name" required v-model="user.name">
         </div>
       </div>
 
@@ -46,7 +85,7 @@
           </div>
           <input type="password" id="password" name="password" 
             class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
-            placeholder="Create a password" required>
+            placeholder="Create a password" required v-model="user.password">
         </div>
       </div>
 
@@ -58,7 +97,7 @@
           </div>
           <input type="password" id="confirm_password" name="confirm_password" 
             class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
-            placeholder="Confirm your password" required>
+            placeholder="Confirm your password" required v-model="user.confirm_password">
         </div>
       </div>
 
@@ -71,7 +110,9 @@
 
       <div class="text-center text-sm text-gray-400">
         Already have an account? 
-        <a href="index.html" class="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200">Sign in</a>
+        <RouterLink to="/login" class="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200">
+          Sign in
+        </RouterLink>
       </div>
     </form>
   </div>
