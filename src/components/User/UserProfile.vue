@@ -1,5 +1,32 @@
 <script setup>
 
+import {ref, onBeforeMount} from "vue";
+import {useLocalStorage} from "@vueuse/core";
+import {userDetail} from "../../lib/api/UserApi.js";
+import {alertError} from "../../lib/alert.js"
+
+const token = useLocalStorage("token", "")
+const name = ref("")
+const password = ref("")
+const confirm_password = ref("")
+
+async function fetchUser(){
+  const response = await userDetail(token.value);
+  const responseBody = await response.json();
+  console.log(responseBody);
+
+  if(response.status === 200){
+    name.value = responseBody.data.name;
+  } else {
+      await alertError(responseBody.errors)
+  }
+
+}
+
+onBeforeMount(async () => {
+  await fetchUser();
+})
+
 </script>
 
 <template>
@@ -27,7 +54,7 @@
               </div>
               <input type="text" id="name" name="name" 
                 class="w-full pl-10 pr-3 py-3 bg-gray-700 bg-opacity-50 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
-                placeholder="Enter your full name" value="John Doe" required>
+                placeholder="Enter your full name" required v-model="name">
             </div>
           </div>
 

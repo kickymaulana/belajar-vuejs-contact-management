@@ -32,7 +32,7 @@ export const userDetail = async (token) => {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
-      'Autorization': token
+      'Authorization': token
     },
   })
 }
