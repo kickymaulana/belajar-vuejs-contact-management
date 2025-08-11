@@ -7,7 +7,7 @@ import {useRouter} from "vue-router";
 import {useLocalStorage} from "@vueuse/core"
 
 const user = reactive({
-  usernae: "",
+  username: "",
   password: "",
 })
 
