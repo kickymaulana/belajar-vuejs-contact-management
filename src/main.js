@@ -5,7 +5,7 @@ import Layout from "./components/Layout.vue";
 import UserRegister from "./components/User/UserRegister.vue"
 import UserLogin from './components/User/UserLogin.vue';
 import DashboardLayout from './components/DashboardLayout.vue';
-import ContactList from './components/ContactList.vue';
+import ContactList from './components/Contact/ContactList.vue';
 import UserProfile from './components/User/UserProfile.vue';
 
 const router = createRouter({
